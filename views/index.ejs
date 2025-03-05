@@ -7,7 +7,10 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-  <h1>Balance Total: <%= balanceTotal.toFixed(2) %> MXN</h1>
+
+    <button id="toggle-theme">Cambiar a Modo Oscuro</button>
+
+      <h1>Balance Total: <%= balanceTotal.toFixed(2) %> MXN</h1>
 
   <!-- Formulario para actualizar tipos de cambio -->
   <h2>Actualizar Tipos de Cambio</h2>
@@ -68,5 +71,30 @@
       </li>
     <% }) %>
   </ul>
+
+  <script>
+    const toggleButton = document.getElementById('toggle-theme');
+    const body = document.body;
+
+    // Verificar el tema guardado en localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      body.setAttribute('data-theme', savedTheme);
+      toggleButton.textContent = savedTheme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
+    }
+
+    // Cambiar el tema al hacer clic en el botón
+    toggleButton.addEventListener('click', () => {
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        toggleButton.textContent = 'Cambiar a Modo Oscuro';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        toggleButton.textContent = 'Cambiar a Modo Claro';
+      }
+    });
+  </script>
 </body>
 </html>
