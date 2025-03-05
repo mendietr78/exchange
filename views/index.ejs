@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
+  <!-- Botón para cambiar el modo -->
+  <button id="toggle-theme">Cambiar a Modo Oscuro</button>
+
   <h1>Balance: <%= balance %></h1>
   <h2>Agregar Movimiento</h2>
   <form action="/agregar-movimiento" method="POST">
@@ -25,9 +28,37 @@
   <ul>
     <% movimientos.forEach(movimiento => { %>
       <li>
-        <%= movimiento.fecha %> - <%= movimiento.tipo %>: <%= movimiento.monto %> (<%= movimiento.descripcion %>)
+        <span class="fecha"><%= movimiento.fecha %></span> -
+        <span class="<%= movimiento.tipo %>"><%= movimiento.tipo %>: <%= movimiento.monto %></span>
+        (<%= movimiento.descripcion %>)
       </li>
     <% }) %>
   </ul>
+
+  <!-- Script para cambiar el modo -->
+  <script>
+    const toggleButton = document.getElementById('toggle-theme');
+    const body = document.body;
+
+    // Verificar el tema guardado en localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      body.setAttribute('data-theme', savedTheme);
+      toggleButton.textContent = savedTheme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
+    }
+
+    // Cambiar el tema al hacer clic en el botón
+    toggleButton.addEventListener('click', () => {
+      if (body.getAttribute('data-theme') === 'dark') {
+        body.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        toggleButton.textContent = 'Cambiar a Modo Oscuro';
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        toggleButton.textContent = 'Cambiar a Modo Claro';
+      }
+    });
+  </script>
 </body>
 </html>

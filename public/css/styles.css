@@ -112,3 +112,71 @@ body {
     font-size: 0.9em;
     color: #7f8c8d;
   }
+
+  :root {
+    /* Colores para el modo claro */
+    --color-fondo: #f4f4f9;
+    --color-texto: #333;
+    --color-fondo-formulario: #ffffff;
+    --color-sombra: rgba(0, 0, 0, 0.1);
+    --color-titulo: #2c3e50;
+    --color-boton: #3498db;
+    --color-boton-hover: #2980b9;
+    --color-entrada: #27ae60;
+    --color-salida: #e74c3c;
+    --color-fecha: #7f8c8d;
+  }
+  
+  [data-theme="dark"] {
+    /* Colores para el modo oscuro */
+    --color-fondo: #1e1e2f;
+    --color-texto: #e0e0e0;
+    --color-fondo-formulario: #2d2d44;
+    --color-sombra: rgba(0, 0, 0, 0.3);
+    --color-titulo: #e0e0e0;
+    --color-boton: #4455aa;
+    --color-boton-hover: #334499;
+    --color-entrada: #2ecc71;
+    --color-salida: #e74c3c;
+    --color-fecha: #95a5a6;
+  }
+  
+  /* Aplicar colores según el tema */
+  body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+  }
+  
+  h1, h2 {
+    color: var(--color-titulo);
+  }
+  
+  form {
+    background-color: var(--color-fondo-formulario);
+    box-shadow: 0 4px 6px var(--color-sombra);
+  }
+  
+  button {
+    background-color: var(--color-boton);
+  }
+  
+  button:hover {
+    background-color: var(--color-boton-hover);
+  }
+  
+  .entrada {
+    color: var(--color-entrada);
+  }
+  
+  .salida {
+    color: var(--color-salida);
+  }
+  
+  .fecha {
+    color: var(--color-fecha);
+  }
+  
+  li {
+    background-color: var(--color-fondo-formulario);
+    box-shadow: 0 2px 4px var(--color-sombra);
+  }
