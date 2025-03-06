@@ -1,6 +1,12 @@
+require('dotenv').config(); // Cargar variables de entorno desde .env
 const express = require('express');
+const connectDB = require('./db');
+const { Denominacion, Movimiento } = require('./models');
 const app = express();
 const port = 3000;
+
+// Conectar a MongoDB
+connectDB();
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -8,57 +14,88 @@ app.set('views', './views');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-// Datos iniciales
-let denominaciones = {
-  ETH: { balance: 0, compra: 30000, venta: 32000 }, // 1 ETH = 30,000 MXN (compra), 32,000 MXN (venta)
-  BTC: { balance: 0, compra: 800000, venta: 820000 }, // 1 BTC = 800,000 MXN (compra), 820,000 MXN (venta)
-  USD: { balance: 0, compra: 18, venta: 20 }, // 1 USD = 18 MXN (compra), 20 MXN (venta)
+// Función para calcular el balance total
+const calcularBalanceTotal = async () => {
+  const denominaciones = await Denominacion.find({});
+  let balanceTotal = 0;
+  for (const denom of denominaciones) {
+    balanceTotal += denom.balance * denom.venta;
+  }
+  return balanceTotal;
 };
 
-let movimientos = [];
-
 // Ruta principal
-app.get('/', (req, res) => {
-  // Calcular el balance total en pesos (MXN)
-  let balanceTotal = 0;
-  for (const moneda in denominaciones) {
-    // Usamos el tipo de cambio de VENTA para convertir a MXN
-    balanceTotal += denominaciones[moneda].balance * denominaciones[moneda].venta;
-  }
+app.get('/', async (req, res) => {
+  try {
+    const denominaciones = await Denominacion.find({});
+    const movimientos = await Movimiento.find({}).sort({ fecha: -1 }); // Ordenar por fecha descendente
+    const balanceTotal = await calcularBalanceTotal();
 
-  res.render('index', { denominaciones, movimientos, balanceTotal });
+    res.render('index', { denominaciones, movimientos, balanceTotal, error: null });
+  } catch (error) {
+    console.error('Error obteniendo datos:', error);
+    res.status(500).send('Error interno del servidor');
+  }
 });
 
 // Ruta para agregar un movimiento
-app.post('/agregar-movimiento', (req, res) => {
+app.post('/agregar-movimiento', async (req, res) => {
   const { tipo, monto, descripcion, moneda } = req.body;
 
-  const movimiento = {
-    tipo,
-    monto: parseFloat(monto),
-    descripcion,
-    moneda,
-    fecha: new Date().toLocaleDateString(),
-  };
+  try {
+    // Crear el movimiento
+    const movimiento = new Movimiento({
+      tipo,
+      monto: parseFloat(monto),
+      descripcion,
+      moneda,
+    });
+    await movimiento.save();
 
-  movimientos.push(movimiento);
+    // Actualizar el balance de la denominación
+    const denominacion = await Denominacion.findOne({ nombre: moneda });
+    if (tipo === 'entrada') {
+      denominacion.balance += movimiento.monto;
+    } else {
+      denominacion.balance -= movimiento.monto;
+    }
+    await denominacion.save();
 
-  // Actualizar el balance de la denominación correspondiente
-  if (tipo === 'entrada') {
-    denominaciones[moneda].balance += movimiento.monto;
-  } else {
-    denominaciones[moneda].balance -= movimiento.monto;
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error agregando movimiento:', error);
+    res.status(500).send('Error interno del servidor');
   }
-
-  res.redirect('/');
 });
 
 // Ruta para actualizar los tipos de cambio
-app.post('/actualizar-tipos-cambio', (req, res) => {
+app.post('/actualizar-tipos-cambio', async (req, res) => {
   const { moneda, compra, venta } = req.body;
-  denominaciones[moneda].compra = parseFloat(compra);
-  denominaciones[moneda].venta = parseFloat(venta);
-  res.redirect('/');
+
+  try {
+    const denominacion = await Denominacion.findOne({ nombre: moneda });
+
+    // Verificar si la denominación existe
+    if (!denominacion) {
+      console.error('Denominación no encontrada:', moneda);
+      return res.render('index', {
+        denominaciones: await Denominacion.find({}),
+        movimientos: await Movimiento.find({}).sort({ fecha: -1 }),
+        balanceTotal: await calcularBalanceTotal(),
+        error: 'Denominación no encontrada',
+      });
+    }
+
+    // Actualizar los tipos de cambio
+    denominacion.compra = parseFloat(compra);
+    denominacion.venta = parseFloat(venta);
+    await denominacion.save();
+
+    res.redirect('/');
+  } catch (error) {
+    console.error('Error actualizando tipos de cambio:', error);
+    res.status(500).send('Error interno del servidor');
+  }
 });
 
 app.listen(port, () => {

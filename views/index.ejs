@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Balance de Movimientos</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <!-- Botón de modo oscuro/claro -->
+  <div id="theme-toggle" class="theme-toggle">
+    <i class="fas fa-sun"></i> <!-- Ícono del sol (modo claro) -->
+    <i class="fas fa-moon"></i> <!-- Ícono de la luna (modo oscuro) -->
+  </div>
 
-    <button id="toggle-theme">Cambiar a Modo Oscuro</button>
-
-      <h1>Balance Total: <%= balanceTotal.toFixed(2) %> MXN</h1>
+  <h1>Balance Total: <%= balanceTotal.toFixed(2) %> MXN</h1>
 
   <!-- Formulario para actualizar tipos de cambio -->
   <h2>Actualizar Tipos de Cambio</h2>
@@ -52,12 +56,12 @@
   <!-- Balances por denominación -->
   <h2>Balances por Denominación</h2>
   <ul>
-    <% for (const moneda in denominaciones) { %>
+    <% denominaciones.forEach(denominacion => { %>
       <li>
-        <%= moneda %>: <%= denominaciones[moneda].balance.toFixed(4) %>
-        (Compra: <%= denominaciones[moneda].compra %> MXN, Venta: <%= denominaciones[moneda].venta %> MXN)
+        <%= denominacion.nombre %>: <%= denominacion.balance.toFixed(4) %>
+        (Compra: <%= denominacion.compra %> MXN, Venta: <%= denominacion.venta %> MXN)
       </li>
-    <% } %>
+    <% }) %>
   </ul>
 
   <!-- Registro de movimientos -->
@@ -65,34 +69,32 @@
   <ul>
     <% movimientos.forEach(movimiento => { %>
       <li>
-        <span class="fecha"><%= movimiento.fecha %></span> -
+        <span class="fecha"><%= movimiento.fecha.toLocaleDateString() %></span> -
         <span class="<%= movimiento.tipo %>"><%= movimiento.tipo %>: <%= movimiento.monto.toFixed(4) %> <%= movimiento.moneda %></span>
         (<%= movimiento.descripcion %>)
       </li>
     <% }) %>
   </ul>
 
+  <!-- Script para cambiar el modo -->
   <script>
-    const toggleButton = document.getElementById('toggle-theme');
+    const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
 
     // Verificar el tema guardado en localStorage
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       body.setAttribute('data-theme', savedTheme);
-      toggleButton.textContent = savedTheme === 'dark' ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
     }
 
     // Cambiar el tema al hacer clic en el botón
-    toggleButton.addEventListener('click', () => {
+    themeToggle.addEventListener('click', () => {
       if (body.getAttribute('data-theme') === 'dark') {
         body.setAttribute('data-theme', 'light');
         localStorage.setItem('theme', 'light');
-        toggleButton.textContent = 'Cambiar a Modo Oscuro';
       } else {
         body.setAttribute('data-theme', 'dark');
         localStorage.setItem('theme', 'dark');
-        toggleButton.textContent = 'Cambiar a Modo Claro';
       }
     });
   </script>
