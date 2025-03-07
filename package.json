@@ -5,7 +5,7 @@
   "main": "index.js",
   
     "scripts": {
-      "start": "node app.js"
+      "start": "node app0.js"
     },
   
   "keywords": [],
