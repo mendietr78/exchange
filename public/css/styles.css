@@ -21,25 +21,76 @@ h1, h2 {
   color: #e0e0e0;
 }
 
-/* Balance total */
-.balance-total {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 20px;
+/* Formulario */
+form {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-[data-theme="dark"] .balance-total {
+[data-theme="dark"] form {
+  background-color: #2d2d44;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+[data-theme="dark"] label {
   color: #e0e0e0;
 }
 
-/* Resumen de movimientos */
-.movimientos-list {
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] button {
+  background-color: #3d3d5c;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+[data-theme="dark"] button {
+  background-color: #4455aa;
+}
+
+[data-theme="dark"] button:hover {
+  background-color: #334499;
+}
+
+/* Lista de movimientos */
+ul {
   list-style-type: none;
   padding: 0;
 }
 
-.movimientos-list li {
+li {
   background-color: #ffffff;
   margin: 10px 0;
   padding: 15px;
@@ -51,12 +102,12 @@ h1, h2 {
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
 }
 
-[data-theme="dark"] .movimientos-list li {
+[data-theme="dark"] li {
   background-color: #2d2d44;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.movimientos-list li:hover {
+li:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -70,7 +121,19 @@ h1, h2 {
   color: #e74c3c;
 }
 
-/* Botón de modo oscuro/claro */
+/* Balance */
+.balance {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+[data-theme="dark"] .balance {
+  color: #e0e0e0;
+}
+
+/* Estilos para el botón de modo oscuro/claro */
 .theme-toggle {
   position: fixed;
   top: 20px;
